@@ -11,7 +11,7 @@ type Database = {
 export const getDatabases = (): Database[] => {
   const clerkDocs = new BaseClient({
     databaseURL:
-      "https://Domitrius-Clark-s-workspace-lrnsjf.us-east-1.xata.sh/db/clerk-docs-test",
+      "https://Shared-Testing-Databases-lrnsjf.us-east-1.xata.sh/db/clerk-docs-test",
   });
 
   return [
