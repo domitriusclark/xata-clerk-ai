@@ -74,7 +74,7 @@ const useAskXataDocs = () => {
 };
 
 const xataDocsResponse = z.array(
-  z.object({ id: z.string(), title: z.string(), slug: z.string() })
+  z.object({ id: z.string(), title: z.string(), url: z.string() })
 );
 
 export type XataDocsResponse = z.infer<typeof xataDocsResponse>;
@@ -172,9 +172,9 @@ export default function Home({
           {relatedDocs.length > 0 && (
             <div>
               <p>I have used the following doc pages as context:</p>
-              {relatedDocs.map(({ id, title, slug }) => (
+              {relatedDocs.map(({ id, title, url }) => (
                 <li key={id}>
-                  <a href={"https://" + slug} target="_blank">
+                  <a href={url} target="_blank">
                     {title}
                   </a>
                 </li>
