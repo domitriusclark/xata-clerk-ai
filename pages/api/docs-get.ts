@@ -33,7 +33,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
   const params = {
     filter: { $any: ids.map((id) => ({ id })) },
-    columns: ["id", "title", "slug"],
+    columns: ["id", "title", "url"],
   };
 
   const variant = getDatabases().find((db) => db.id === body.data.database);
