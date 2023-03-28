@@ -1,7 +1,7 @@
 import { AskResult } from "@xata.io/client";
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { getXataClient } from "@/src/xata";
+import { getXataClient } from "@/lib/xata";
 
 const xata = getXataClient();
 

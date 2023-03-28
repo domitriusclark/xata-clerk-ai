@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getXataClient } from "@/src/xata";
+import { getXataClient } from "@/lib/xata";
 const xata = getXataClient();
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

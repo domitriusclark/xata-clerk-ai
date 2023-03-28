@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useState } from "react";
 import useAskDocs from "@/src/hooks/useAskDocs";
 import useGetDocs from "@/src/hooks/useGetDocs";
-import { getXataClient } from "@/src/xata";
+import { getXataClient } from "@/lib/xata";
 
 export async function getStaticProps() {
   const xata = getXataClient();
