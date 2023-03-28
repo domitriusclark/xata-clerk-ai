@@ -3,21 +3,16 @@ import Head from "next/head";
 import { useState } from "react";
 import useAskDocs from "@/src/hooks/useAskDocs";
 import useGetDocs from "@/src/hooks/useGetDocs";
-import { getDatabases } from "@/src/multiple-dbs";
+import { getXataClient } from "@/src/xata";
 
 export async function getStaticProps() {
-  const dbs = [];
+  const xata = getXataClient();
 
-  for (const database of getDatabases()) {
-    const { id, name, client: xata, lookupTable } = database;
-    const { aggs } = await xata.db[lookupTable]?.aggregate({
-      total: { count: "*" },
-    });
+  const { aggs } = await xata.db.content.aggregate({
+    total: { count: "*" },
+  });
 
-    dbs.push({ id, name, recordCount: aggs.total });
-  }
-
-  return { props: { dbs } };
+  return { props: { recordCount: aggs.total } };
 }
 
 function prettyFormatNumber(num: number) {
@@ -25,12 +20,13 @@ function prettyFormatNumber(num: number) {
 }
 
 export default function Home({
-  dbs,
+  recordCount,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const [question, setQuestion] = useState<string>("");
-  const [selected, setSelected] = useState<string>(dbs[0].id);
+  const [selected, setSelected] = useState<string>("clerk-docs-test");
 
   const { answer, isLoading, records, askQuestion } = useAskDocs();
+
   const { relatedDocs, clearRelated } = useGetDocs(selected, records);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,6 +34,8 @@ export default function Home({
     clearRelated();
     askQuestion(selected, question);
   };
+
+  console.log({ isLoading });
 
   return (
     <>
@@ -48,25 +46,14 @@ export default function Home({
       </Head>
       <main>
         <div>
-          <h1>Xata Ask Demo</h1>
-
           <div>
-            {dbs.map(({ id, name, recordCount }) => (
-              <div
-                key={`database-${id}`}
-                onClick={() => setSelected(id)}
-                style={{
-                  color: selected === id ? "#0070f3" : "inherit",
-                  borderColor: selected === id ? "#0070f3" : "inherit",
-                }}
-              >
-                <h3 style={{ marginBottom: 10 }}>{name}</h3>
-                <p>
-                  {prettyFormatNumber(recordCount)}{" "}
-                  {recordCount === 1 ? "record" : "records"}
-                </p>
-              </div>
-            ))}
+            <div key={`database-clerk-docs-test`}>
+              <h3 style={{ marginBottom: 10 }}>Clerk Docs Demo</h3>
+              <p>
+                {prettyFormatNumber(recordCount)}{" "}
+                {recordCount === 1 ? "record" : "records"}
+              </p>
+            </div>
           </div>
           <form onSubmit={handleFormSubmit}>
             <input
