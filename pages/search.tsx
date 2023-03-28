@@ -51,7 +51,7 @@ export default function Search({ docs }: { docs: Content[] }) {
         <h1>Search Page</h1>
         <input
           placeholder="Search Clerk Docs"
-          className="w-1/2 p-2 border-2 border-gray-800 rounded-xl"
+          className="w-1/2 p-2 mb-4 border-2 border-gray-800 rounded-xl"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchTerm(e.target.value)
           }
