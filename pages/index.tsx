@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useState } from "react";
 import useAskDocs from "@/src/hooks/useAskDocs";
 import useGetDocs from "@/src/hooks/useGetDocs";
-import { getDatabases } from "@/src/xata";
+import { getDatabases } from "@/src/multiple-dbs";
 
 export async function getStaticProps() {
   const dbs = [];

@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { getDatabases } from "@/src/xata";
+import { getDatabases } from "@/src/multiple-dbs";
 
 export const config = {
   runtime: "edge",
