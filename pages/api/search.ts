@@ -20,6 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   for (const { record } of records) {
     data.push(record);
   }
+
   res.status(200).json(data);
 };
 

@@ -42,8 +42,6 @@ export default function Search({ docs }: { docs: Content[] }) {
     [docs, debouncedSearchTerm] // Only call effect if debounced search term changes
   );
 
-  console.log(results);
-
   return (
     <>
       <Head>
@@ -54,24 +52,28 @@ export default function Search({ docs }: { docs: Content[] }) {
         <input
           placeholder="Search Clerk Docs"
           className="w-1/2 p-2 border-2 border-gray-800 rounded-xl"
-          onChange={(e: React.FormEvent<HTMLInputElement>) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchTerm(e.target.value)
           }
         />
         <div className="flex flex-col gap-5">
-          {results.map((doc: Content) => (
-            <div
-              className="p-4 border-2 border-blue-600 rounded-lg"
-              key={doc.id}
-            >
-              <h3>
-                <em>{doc.title}</em>
-              </h3>
-              <a className="text-blue-400" href={doc.url}>
-                {doc.url}
-              </a>
-            </div>
-          ))}
+          {isSearching ? (
+            <h1>Loading...</h1>
+          ) : (
+            results.map((doc: Content) => (
+              <div
+                className="p-4 border-2 border-blue-600 rounded-lg"
+                key={doc.id}
+              >
+                <h3>
+                  <em>{doc.title}</em>
+                </h3>
+                <a className="text-blue-400" href={doc.url || ""}>
+                  {doc.url}
+                </a>
+              </div>
+            ))
+          )}
         </div>
       </main>
     </>
