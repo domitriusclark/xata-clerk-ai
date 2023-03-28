@@ -14,7 +14,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     fuzziness: 1,
     prefix: "phrase",
   });
-  res.status(200).json(records);
+
+  let data = [];
+
+  for (const { record } of records) {
+    data.push(record);
+  }
+
+  res.status(200).json(data);
 };
 
 export default handler;
