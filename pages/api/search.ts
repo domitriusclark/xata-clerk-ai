@@ -1,13 +1,20 @@
-// Generated with CLI
-import { getXataClient } from "@/src/xata";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getXataClient } from "@/lib/xata";
 const xata = getXataClient();
 
-const records = await xata.search.all("expo", {
-  tables: [
-    { table: "content", target: [{ column: "title" }, { column: "content" }] },
-  ],
-  fuzziness: 1,
-  prefix: "phrase",
-});
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { searchTerm } = req.body;
+  const records = await xata.search.all(searchTerm, {
+    tables: [
+      {
+        table: "content",
+        target: [{ column: "title" }, { column: "content" }],
+      },
+    ],
+    fuzziness: 1,
+    prefix: "phrase",
+  });
+  res.status(200).json(records);
+};
 
-console.log(records);
+export default handler;

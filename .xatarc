@@ -1,6 +1,6 @@
 {
   "databaseURL": "https://Domitrius-Clark-s-workspace-lrnsjf.us-east-1.xata.sh/db/clerk-docs-test",
   "codegen": {
-    "output": "src/xata.ts"
+    "output": "lib/xata.ts"
   }
 }

@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { getDatabases } from "@/src/xata";
+import { getXataClient } from "@/lib/xata";
+
+const xata = getXataClient();
 
 export const config = {
   runtime: "edge",
@@ -36,15 +38,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
     columns: ["id", "title", "url"],
   };
 
-  const variant = getDatabases().find((db) => db.id === body.data.database);
-  if (!variant) {
-    return new Response(JSON.stringify({ message: "Invalid database" }), {
-      status: 400,
-    });
-  }
-  const { client: xata, lookupTable, options } = variant;
-
-  const result = await xata.db[lookupTable]
+  const result = await xata.db.content
     .filter({
       $any: ids.map((id) => ({ id })),
     })

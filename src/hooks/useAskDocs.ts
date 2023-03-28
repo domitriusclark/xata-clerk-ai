@@ -26,11 +26,12 @@ const useAskDocs = () => {
             throw new Error("stop");
           }
           setAnswer((prev = "") => `${prev}${answer}`);
-          setIsLoading(!done);
         } catch (e) {}
+        setIsLoading(false);
       },
       onclose() {
         console.log("onclose");
+
         // do nothing to stop the operation
       },
       onerror(err) {

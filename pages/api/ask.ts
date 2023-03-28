@@ -1,7 +1,9 @@
 import { AskResult } from "@xata.io/client";
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { getDatabases } from "@/src/xata";
+import { getXataClient } from "@/lib/xata";
+
+const xata = getXataClient();
 
 export const config = {
   runtime: "edge",
@@ -27,18 +29,19 @@ const handler = async (req: NextRequest): Promise<Response> => {
   }
 
   const encoder = new TextEncoder();
-  const variant = getDatabases().find((db) => db.id === body.data.database);
-  if (!variant) {
-    return new Response(JSON.stringify({ message: "Invalid database" }), {
-      status: 400,
-    });
-  }
 
-  const { client: xata, lookupTable, options } = variant;
   const stream = new ReadableStream({
     async start(controller) {
-      xata.db[lookupTable].ask(body.data.question, {
-        ...options,
+      xata.db.content.ask(body.data.question, {
+        rules: [
+          "You are a friendly chat bot that answers questions about the Netlify platform.",
+          'Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with "It doesn\'t look like I have enough information to answer that. Check the documentation or contact support."',
+        ],
+        searchType: "keyword",
+        search: {
+          fuzziness: 1,
+          prefix: "phrase",
+        },
         onMessage: (message: AskResult) => {
           controller.enqueue(encoder.encode(`event: message\n`));
           controller.enqueue(
