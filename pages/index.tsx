@@ -1,6 +1,6 @@
+import * as React from "react";
 import { InferGetStaticPropsType } from "next";
 import Head from "next/head";
-import { useState } from "react";
 import useAskDocs from "@/src/hooks/useAskDocs";
 import useGetDocs from "@/src/hooks/useGetDocs";
 import { getXataClient } from "@/lib/xata";
@@ -22,8 +22,8 @@ function prettyFormatNumber(num: number) {
 export default function Home({
   recordCount,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const [question, setQuestion] = useState<string>("");
-  const [selected, setSelected] = useState<string>("clerk-docs-test");
+  const [question, setQuestion] = React.useState<string>("");
+  const [selected, setSelected] = React.useState<string>("clerk-docs-test");
 
   const { answer, isLoading, records, askQuestion } = useAskDocs();
 
