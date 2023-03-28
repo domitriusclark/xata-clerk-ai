@@ -35,8 +35,6 @@ export default function Home({
     askQuestion(selected, question);
   };
 
-  console.log({ isLoading });
-
   return (
     <>
       <Head>
