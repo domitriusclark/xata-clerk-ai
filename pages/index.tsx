@@ -1,9 +1,9 @@
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { InferGetStaticPropsType } from "next";
 import Head from "next/head";
-import { useCallback, useState, useEffect } from "react";
+import { useState } from "react";
+import useAskDocs from "@/src/hooks/useAskDocs";
+import useGetDocs from "@/src/hooks/useGetDocs";
 import { getDatabases } from "@/src/xata";
-import { z } from "zod";
 
 export async function getStaticProps() {
   const dbs = [];
@@ -24,97 +24,14 @@ function prettyFormatNumber(num: number) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const useAskXataDocs = () => {
-  const [answer, setAnswer] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [records, setRecords] = useState<string[]>([]);
-
-  const askQuestion = useCallback((database: string, question: string) => {
-    if (!question) return;
-
-    setAnswer(undefined);
-    setIsLoading(true);
-
-    void fetchEventSource(`/api/ask`, {
-      method: "POST",
-      body: JSON.stringify({ question, database }),
-      headers: { "Content-Type": "application/json" },
-      openWhenHidden: true,
-      onmessage(ev) {
-        try {
-          const { answer = "", records, done } = JSON.parse(ev.data);
-          if (records) {
-            setRecords(records);
-            console.log("stop");
-            throw new Error("stop");
-          }
-          setAnswer((prev = "") => `${prev}${answer}`);
-          setIsLoading(!done);
-        } catch (e) {}
-      },
-      onclose() {
-        console.log("onclose");
-        // do nothing to stop the operation
-      },
-      onerror(err) {
-        console.log("onerror", err);
-        throw err; // rethrow to stop the operation
-      },
-    });
-  }, []);
-
-  // Clear answer function
-  const clearAnswer = useCallback(() => {
-    setAnswer(undefined);
-    setIsLoading(false);
-    setRecords([]);
-  }, []);
-
-  return { isLoading, answer, records, askQuestion, clearAnswer };
-};
-
-const xataDocsResponse = z.array(
-  z.object({ id: z.string(), title: z.string(), url: z.string() })
-);
-
-export type XataDocsResponse = z.infer<typeof xataDocsResponse>;
-
-export const useGetXataDocs = (database: string, ids: string[] = []) => {
-  const [relatedDocs, setRelatedDocs] = useState<XataDocsResponse>([]);
-
-  useEffect(() => {
-    if (ids?.length === 0) {
-      setRelatedDocs([]);
-      return;
-    }
-
-    const fetchData = async () => {
-      const response = await fetch(`/api/docs-get`, {
-        method: "POST",
-        body: JSON.stringify({ database, ids }),
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await response.json();
-      setRelatedDocs(xataDocsResponse.parse(data));
-    };
-    fetchData();
-  }, [database, ids]);
-
-  const clearRelated = useCallback(() => {
-    setRelatedDocs([]);
-  }, []);
-
-  return { relatedDocs, clearRelated };
-};
-
 export default function Home({
   dbs,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const [question, setQuestion] = useState<string>("");
   const [selected, setSelected] = useState<string>(dbs[0].id);
 
-  const { answer, isLoading, records, askQuestion } = useAskXataDocs();
-  const { relatedDocs, clearRelated } = useGetXataDocs(selected, records);
+  const { answer, isLoading, records, askQuestion } = useAskDocs();
+  const { relatedDocs, clearRelated } = useGetDocs(selected, records);
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -159,7 +76,9 @@ export default function Home({
               placeholder={"Write a question to ask the chatbot"}
             />
             <div>
-              <button type="submit">Ask</button>
+              <button disabled={isLoading ? true : false} type="submit">
+                Ask
+              </button>
             </div>
           </form>
           {answer ? (
